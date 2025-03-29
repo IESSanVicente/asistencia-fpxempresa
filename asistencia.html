@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Asistencia</title>
+</head>
+<body>
+  <h2>Registro de Asistencia</h2>
+  <div id="estado">Verificando acceso...</div>
+
+  <div id="formulario" style="display:none;">
+    <form id="asistenciaForm" onsubmit="return validarFormulario()">
+      <label>Nombre:</label><br>
+      <input type="text" name="nombre" id="nombre" required disabled><br><br>
+
+      <label>Apellidos:</label><br>
+      <input type="text" name="apellidos" id="apellidos" required disabled><br><br>
+
+      <label>Grupo:</label><br>
+      <select name="grupo" id="grupo" required disabled>
+        <option value="">--Selecciona--</option>
+        <option>1ºASIR</option>
+        <option>1ºDAM</option>
+        <option>1ºDAW</option>
+      </select><br><br>
+
+      <label>Letra del Grupo (si aplica):</label><br>
+      <input type="text" name="letra" id="letra" disabled><br><br>
+
+      <label>Instituto:</label><br>
+      <select name="instituto" id="instituto" required>
+        <option value="">--Selecciona--</option>
+        <option>IES SAN VICENTE</option>
+        <option>IES DR. BALMIS</option>
+        <option>IES MARE NOSTRUM</option>
+      </select><br><br>
+
+      <button type="submit">Enviar</button>
+    </form>
+    <p id="mensaje"></p>
+  </div>
+
+  <div id="accesoDenegado" style="display:none; color:red;">
+    Solo se permite el registro de 9:00 a 11:00 en el lugar del evento y en las fechas autorizadas.
+  </div>
+
+  <script>
+    const COORDS_EVENTO = { lat: 38.4229665, lon: -0.4488382 };
+    const RADIO_METROS = 100;
+    const FECHAS_VALIDAS = ["2025-03-29", "2025-03-31", "2025-04-01", "2025-04-02", "2025-04-07", "2025-04-09"];
+    const HORA_INICIO = 9;
+    const HORA_FIN = 23;
+    const SCRIPT_URL = "AQUÍ_TU_URL_DEL_SCRIPT";
+    let ipUsuario = "NO DETECTADA";
+
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => ipUsuario = data.ip)
+      .catch(err => console.error("No se pudo obtener la IP."));
+
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const φ1 = lat1 * Math.PI / 180;
+      const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180;
+      const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+      const a = Math.sin(Δφ/2)**2 +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ/2)**2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function esFechaYHoraValida() {
+      const ahora = new Date();
+      const fechaISO = ahora.toISOString().split("T")[0];
+      const hora = ahora.getHours();
+      return FECHAS_VALIDAS.includes(fechaISO) && hora >= HORA_INICIO && hora < HORA_FIN;
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const distancia = calcularDistancia(lat, lon, COORDS_EVENTO.lat, COORDS_EVENTO.lon);
+
+      if (distancia < RADIO_METROS && esFechaYHoraValida()) {
+        document.getElementById("estado").style.display = "none";
+        document.getElementById("formulario").style.display = "block";
+      } else {
+        document.getElementById("estado").style.display = "none";
+        document.getElementById("accesoDenegado").style.display = "block";
+      }
+    }, err => {
+      document.getElementById("estado").textContent = "No se pudo obtener tu ubicación.";
+    });
+
+    document.getElementById("instituto").addEventListener("change", function() {
+      document.getElementById("grupo").disabled = !this.value;
+    });
+
+    document.getElementById("grupo").addEventListener("change", function() {
+      const habilitar = !!this.value;
+      document.getElementById("nombre").disabled = !habilitar;
+      document.getElementById("apellidos").disabled = !habilitar;
+      document.getElementById("letra").disabled = !habilitar;
+    });
+
+    function validarFormulario() {
+      const nombre = document.getElementById("nombre").value.trim();
+      const apellidos = document.getElementById("apellidos").value.trim();
+      const grupo = document.getElementById("grupo").value;
+      const instituto = document.getElementById("instituto").value;
+      if (!nombre || !apellidos || !grupo || !instituto) {
+        alert("Por favor, rellena todos los campos obligatorios.");
+        return false;
+      }
+      return true;
+    }
+
+    document.getElementById("asistenciaForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const datos = {};
+      for (let [key, val] of form.entries()) {
+        datos[key] = val.toUpperCase();
+      }
+      datos["ip"] = ipUsuario;
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: new URLSearchParams(datos)
+      }).then(res => res.text()).then(msg => {
+        document.getElementById("mensaje").textContent = "Asistencia registrada correctamente.";
+        e.target.reset();
+      }).catch(err => {
+        document.getElementById("mensaje").textContent = "Error al registrar.";
+      });
+    });
+  </script>
+</body>
+</html>
