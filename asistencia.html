@@ -3,19 +3,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de Asistencia</title>
+  <title>Registro de Asistencia I Jornadas FPxEmpresa</title>
 </head>
 <body>
-  <h2>Registro de Asistencia</h2>
+  <h2>Registro de Asistencia I Jornadas FPxEmpresa</h2>
   <div id="estado">Verificando acceso...</div>
 
   <div id="formulario" style="display:none;">
     <form id="asistenciaForm" onsubmit="return validarFormulario()">
-      <label>Nombre:</label><br>
-      <input type="text" name="nombre" id="nombre" required disabled><br><br>
-
-      <label>Apellidos:</label><br>
-      <input type="text" name="apellidos" id="apellidos" required disabled><br><br>
+      <label>Instituto:</label><br>
+      <select name="instituto" id="instituto" required>
+        <option value="">--Selecciona--</option>
+        <option>IES SAN VICENTE</option>
+        <option>IES DR. BALMIS</option>
+        <option>IES MARE NOSTRUM</option>
+      </select><br><br>
 
       <label>Grupo:</label><br>
       <select name="grupo" id="grupo" required disabled>
@@ -28,13 +30,11 @@
       <label>Letra del Grupo (si aplica):</label><br>
       <input type="text" name="letra" id="letra" disabled><br><br>
 
-      <label>Instituto:</label><br>
-      <select name="instituto" id="instituto" required>
-        <option value="">--Selecciona--</option>
-        <option>IES SAN VICENTE</option>
-        <option>IES DR. BALMIS</option>
-        <option>IES MARE NOSTRUM</option>
-      </select><br><br>
+      <label>Nombre:</label><br>
+      <input type="text" name="nombre" id="nombre" required disabled><br><br>
+
+      <label>Apellidos:</label><br>
+      <input type="text" name="apellidos" id="apellidos" required disabled><br><br>
 
       <button type="submit">Enviar</button>
     </form>
