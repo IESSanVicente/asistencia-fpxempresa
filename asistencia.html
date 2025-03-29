@@ -3,10 +3,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de Asistencia I Jornadas FPxEmpresa</title>
+  <title>Registro de Asistencia I Jordanas FPxEmpresa</title>
 </head>
 <body>
-  <h2>Registro de Asistencia<br>I Jornadas FPxEmpresa</h2>
+  <h2>Registro de Asistencia I Jordanas FPxEmpresa</h2>
   <div id="estado">Verificando acceso...</div>
 
   <div id="formulario" style="display:none;">
@@ -21,14 +21,8 @@
 
       <label>Grupo:</label><br>
       <select name="grupo" id="grupo" required disabled>
-        <option value="">--Selecciona--</option>
-        <option>1ºASIR</option>
-        <option>1ºDAM</option>
-        <option>1ºDAW</option>
+        <option value="">--Selecciona un instituto primero--</option>
       </select><br><br>
-
-      <label>Letra del Grupo (si aplica):</label><br>
-      <input type="text" name="letra" id="letra" disabled><br><br>
 
       <label>Nombre:</label><br>
       <input type="text" name="nombre" id="nombre" required disabled><br><br>
@@ -51,8 +45,14 @@
     const FECHAS_VALIDAS = ["2025-03-29", "2025-03-31", "2025-04-01", "2025-04-02", "2025-04-07", "2025-04-09"];
     const HORA_INICIO = 9;
     const HORA_FIN = 23;
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2ZBF_hi2ZX5ZFdavbvlQ9hFxtSc5egi-3ES7pYLmuGahI1uboYsa2ig0Atl6OHLIo/exec";
+    const SCRIPT_URL = "AQUÍ_TU_URL_DEL_SCRIPT";
     let ipUsuario = "NO DETECTADA";
+
+    const gruposPorInstituto = {
+      "IES SAN VICENTE": ["1º ASIR", "1º DAW", "1º DAM A", "1º DAM B"],
+      "IES DR. BALMIS": ["1º ASIR", "1º DAW", "1º DAM A", "1º DAM B"],
+      "IES MARE NOSTRUM": ["1º ASIR I", "1º ASIR J", "1º DAW M", "1º DAW N", "1º DAM O"]
+    };
 
     fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
@@ -97,14 +97,24 @@
     });
 
     document.getElementById("instituto").addEventListener("change", function() {
-      document.getElementById("grupo").disabled = !this.value;
+      const grupoSelect = document.getElementById("grupo");
+      grupoSelect.innerHTML = '<option value="">--Selecciona--</option>';
+      const grupos = gruposPorInstituto[this.value] || [];
+      grupos.forEach(grupo => {
+        const option = document.createElement("option");
+        option.value = grupo;
+        option.textContent = grupo;
+        grupoSelect.appendChild(option);
+      });
+      grupoSelect.disabled = grupos.length === 0;
+      document.getElementById("nombre").disabled = true;
+      document.getElementById("apellidos").disabled = true;
     });
 
     document.getElementById("grupo").addEventListener("change", function() {
       const habilitar = !!this.value;
       document.getElementById("nombre").disabled = !habilitar;
       document.getElementById("apellidos").disabled = !habilitar;
-      document.getElementById("letra").disabled = !habilitar;
     });
 
     function validarFormulario() {
