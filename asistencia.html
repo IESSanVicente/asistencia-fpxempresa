@@ -97,6 +97,7 @@
     });
 
     document.getElementById("instituto").addEventListener("change", function() {
+      document.getElementById("mensaje").textContent = "";
       const grupoSelect = document.getElementById("grupo");
       grupoSelect.innerHTML = '<option value="">--Selecciona--</option>';
       const grupos = gruposPorInstituto[this.value] || [];
