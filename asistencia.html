@@ -1,41 +1,105 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro de Asistencia I Jordanas FPxEmpresa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Asistencia</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      backdrop-filter: blur(4px);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #popup {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      margin-top: 1.5rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004999;
+    }
+
+    #estado, #accesoDenegado, #mensaje {
+      text-align: center;
+      color: #d8000c;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Registro de Asistencia<br>I Jordanas FPxEmpresa</h2>
-  <div id="estado">Verificando acceso...</div>
+  <div id="popup">
+    <h2>Registro de Asistencia<br>I Jordanas FPxEmpresa</h2>
+    <div id="estado">Verificando acceso...</div>
 
-  <div id="formulario" style="display:none;">
-    <form id="asistenciaForm" onsubmit="return validarFormulario()">
-      <label>Instituto:</label><br>
-      <select name="instituto" id="instituto" required>
-        <option value="">--Selecciona--</option>
-        <option>IES SAN VICENTE</option>
-        <option>IES DR. BALMIS</option>
-        <option>IES MARE NOSTRUM</option>
-      </select><br><br>
+    <div id="formulario" style="display:none;">
+      <form id="asistenciaForm" onsubmit="return validarFormulario()">
+        <label>Instituto:</label><br>
+        <select name="instituto" id="instituto" required>
+          <option value="">--Selecciona--</option>
+          <option>IES SAN VICENTE</option>
+          <option>IES DR. BALMIS</option>
+          <option>IES MARE NOSTRUM</option>
+        </select><br><br>
+  
+        <label>Grupo:</label><br>
+        <select name="grupo" id="grupo" required disabled>
+          <option value="">--Selecciona un instituto primero--</option>
+        </select><br><br>
+  
+        <label>Nombre:</label><br>
+        <input type="text" name="nombre" id="nombre" required disabled><br><br>
+  
+        <label>Apellidos:</label><br>
+        <input type="text" name="apellidos" id="apellidos" required disabled><br><br>
+  
+        <button type="submit">Enviar</button>
+      </form>
+      <p id="mensaje"></p>
+    </div>
 
-      <label>Grupo:</label><br>
-      <select name="grupo" id="grupo" required disabled>
-        <option value="">--Selecciona un instituto primero--</option>
-      </select><br><br>
-
-      <label>Nombre:</label><br>
-      <input type="text" name="nombre" id="nombre" required disabled><br><br>
-
-      <label>Apellidos:</label><br>
-      <input type="text" name="apellidos" id="apellidos" required disabled><br><br>
-
-      <button type="submit">Enviar</button>
-    </form>
-    <p id="mensaje"></p>
-  </div>
-
-  <div id="accesoDenegado" style="display:none; color:red;">
-    Solo se permite el registro de 9:00 a 11:00 en el lugar del evento y en las fechas autorizadas.
+    <div id="accesoDenegado" style="display:none;">
+      Solo se permite el registro de 9:00 a 11:00 en el lugar del evento y en las fechas autorizadas.
+    </div>
   </div>
 
   <script>
