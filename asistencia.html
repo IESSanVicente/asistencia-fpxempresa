@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -200,7 +199,11 @@
       const form = new FormData(e.target);
       const datos = {};
       for (let [key, val] of form.entries()) {
-        datos[key] = val.toUpperCase();
+        if (key === "nombre" || key === "apellidos") {
+          datos[key] = val.trim().toUpperCase();
+        } else {
+          datos[key] = val.toUpperCase();
+        }
       }
       datos["ip"] = ipUsuario;
 
