@@ -199,22 +199,30 @@
       const form = new FormData(e.target);
       const datos = {};
       for (let [key, val] of form.entries()) {
-        if (key === "nombre" || key === "apellidos") {
-          datos[key] = val.trim().toUpperCase();
-        } else {
-          datos[key] = val.toUpperCase();
-        }
+        datos[key] = val.trim().toUpperCase();
       }
       datos["ip"] = ipUsuario;
+
+      const boton = e.target.querySelector("button");
+      boton.disabled = true;
+      boton.textContent = "Enviando...";
 
       fetch(SCRIPT_URL, {
         method: "POST",
         body: new URLSearchParams(datos)
       }).then(res => res.text()).then(msg => {
-        document.getElementById("mensaje").textContent = "Asistencia registrada correctamente.";
-        e.target.reset();
+        if (msg === "YA REGISTRADO") {
+          document.getElementById("mensaje").textContent = "Ya has registrado tu asistencia hoy.";
+        } else {
+          document.getElementById("mensaje").textContent = "Asistencia registrada correctamente.";
+          e.target.reset();
+        }
+        boton.disabled = false;
+        boton.textContent = "Enviar";
       }).catch(err => {
         document.getElementById("mensaje").textContent = "Error al registrar.";
+        boton.disabled = false;
+        boton.textContent = "Enviar";
       });
     });
   </script>
